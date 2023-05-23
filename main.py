@@ -24,17 +24,21 @@ class Post:
         bot = context.bot
         chat_id = update.effective_chat.id
 
-        keyboard = InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'), 
-                    InlineKeyboardButton(text='No⛔️', callback_data='No')
+        print(update.message.text)
+        if db.get_add_channel(chat_id) is None:
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'), 
+                        InlineKeyboardButton(text='No⛔️', callback_data='No')
+                    ]
                 ]
-            ]
-            )
+                )
 
-        bot.sendMessage(chat_id, 'Shall I send a message❓', reply_markup=keyboard)
-        
+            bot.sendMessage(chat_id, 'Shall I send a message❓', reply_markup=keyboard)
+        else:
+            update_channel = db.update_channel(chat_id, update.message.text)
+
     def add_message(self, update: Update, context: CallbackContext):
         query = update.callback_query
         bot = context.bot
@@ -45,12 +49,13 @@ class Post:
 
         for channel in all_channels:
             print(channel)
-            bot.forward_message(
+            d = bot.copy_message(
                 chat_id=channel['name'], 
                 from_chat_id=chat_id, 
-                message_id=message_id,
-                disable_notification = True
+                message_id=message_id
                 )
+            print(d)
+            
         text = "The message was sent successfully✅"
         query.edit_message_text(text, reply_markup=None)
 
