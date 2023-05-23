@@ -27,4 +27,7 @@ class DB:
         return self.channel_add.get(self.query.id == chat_id)
     
     def delete_add_channel(self, chat_id):
-        self.channel_add.remove(self.query.id == chat_id)        
+        self.channel_add.remove(self.query.id == chat_id)
+
+    def update_channel(self, channel_id, channel_name):
+        self.channels.update({'name': channel_name}, self.query.id == channel_id)        

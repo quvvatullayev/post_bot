@@ -64,4 +64,5 @@ class Post:
         bot = context.bot
         chat_id = update.message.chat_id
         text = 'Channel post for example:\n\n@channel_name'
+        db.add_channel_add(chat_id, 'add_channel')
         bot.sendMessage(chat_id, text)
