@@ -37,7 +37,9 @@ class Post:
 
             bot.sendMessage(chat_id, 'Shall I send a message❓', reply_markup=keyboard)
         else:
-            update_channel = db.update_channel(chat_id, update.message.text)
+            db.update_channel(chat_id, 'add_message')
+            get_add_channel = db.get_add_channel(chat_id)
+            print(get_add_channel)
 
     def add_message(self, update: Update, context: CallbackContext):
         query = update.callback_query
@@ -69,5 +71,9 @@ class Post:
         bot = context.bot
         chat_id = update.message.chat_id
         text = 'Channel post for example:\n\n@channel_name'
-        db.add_channel_add(chat_id, 'add_channel')
-        bot.sendMessage(chat_id, text)
+        if db.get_add_channel(chat_id) is None:
+            db.add_channel_add(chat_id, 'add_channel')
+            bot.sendMessage(chat_id, text)
+        else:
+            db.update_channel(chat_id, 'add_channel')
+            bot.sendMessage(chat_id, text)
