@@ -10,7 +10,8 @@ dispatcher = updater.dispatcher
 post = Post()
 
 dispatcher.add_handler(CommandHandler('start', post.start))
-dispatcher.add_handler(MessageHandler(Filters.text, post.add_post_imge))
+dispatcher.add_handler(MessageHandler(Filters.text('add channel'), post.get_text))
+dispatcher.add_handler(MessageHandler(Filters.all, post.add_post_imge))
 
 updater.start_polling()
 updater.idle()
