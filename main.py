@@ -21,7 +21,7 @@ class Post:
 
         bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
     
-    def add_post_imge(self, update: Update, context: CallbackContext) -> None:
+    def add_post(self, update: Update, context: CallbackContext) -> None:
         bot = context.bot
 
         get_summation_group = db.get_summation_group(update.effective_chat.id)
