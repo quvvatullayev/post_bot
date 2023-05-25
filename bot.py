@@ -10,6 +10,7 @@ dispatcher = updater.dispatcher
 post = Post()
 
 dispatcher.add_handler(CommandHandler('start', post.start))
+dispatcher.add_handler(CommandHandler('id', post.get_id))
 dispatcher.add_handler(CallbackQueryHandler(post.add_group_check, pattern='addgroup'))
 dispatcher.add_handler(CallbackQueryHandler(post.delet_group_check, pattern='deletegroup'))
 dispatcher.add_handler(CallbackQueryHandler(post.add_message, pattern='Yes'))
