@@ -126,5 +126,5 @@ class Post:
             chat_id = update.message.chat.id
             bot = context.bot
             if chat_id < 0:
-                text = f"This chat's ID is: {chat_id}"
+                text = f"Copied message: {chat_id}"
                 bot.send_message(chat_id, text)
