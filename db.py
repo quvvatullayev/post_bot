@@ -16,10 +16,10 @@ class DB:
         return self.groups.all()
     
     def get_group(self, group_id):
-        return self.groups.search(self.query.group_id == group_id)
+        return self.groups.get(doc_id=group_id)
     
     def delete_group(self, group_id):
-        self.groups.remove(self.query.group_id == group_id)
+        self.groups.remove(doc_ids=[group_id])
         return True
     
     def add_summation_group(self, chat_id ,group_id=None):
@@ -27,12 +27,17 @@ class DB:
         return True
     
     def updeate_summation_group(self, group_id, chat_id):
-        self.summation_groups.update(Document({'group_id':group_id}, doc_id=str(chat_id)))
+        self.summation_groups.update(Document({'group_id':group_id}, doc_id=chat_id))
         return True
     
     def get_summation_group(self, chat_id):
-        return self.summation_groups.search(self.query.group_id == str(chat_id))
+        return self.summation_groups.get(doc_id=chat_id)
     
     def delete_summation_group(self, chat_id):
-        self.summation_groups.remove(self.query.group_id == str(chat_id))
+        self.summation_groups.remove(doc_ids=[chat_id])
         return True
+
+db = DB('db.json')
+
+# test get_summation_group
+print(db.delete_summation_group(677038439))
