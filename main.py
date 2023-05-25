@@ -1,79 +1,85 @@
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup,User
+from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from pprint import pprint
 from db import DB
 
 db = DB('db.json')
 
 class Post:
     def start(self, update: Update, context: CallbackContext) -> None:
-        bot = context.bot
-        
-        chat_id = update.effective_chat.id
-        text  = "Hello, I'm a bot that can post messages to your channel✋.\n"
-        text += "To get started, add me to your channel as an administrator and send me the channel name.\n"
+        if update.message.chat.id > 0:
+            bot = context.bot
+            chat_id = update.effective_chat.id
 
-        reply_markup = ReplyKeyboardMarkup(
-            keyboard=[
-                ['add channel']
-            ],
-            resize_keyboard=True     
-            )
+            text  = "Hello, I'm a bot that can post messages to your channel✋.\n"
+            text += "To get started, add me to your channel as an administrator and send me the channel name.\n"
 
-        bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+            reply_markup = ReplyKeyboardMarkup(
+                keyboard=[
+                    ['add channel']
+                ],
+                resize_keyboard=True     
+                )
+
+            bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
     
     def add_post(self, update: Update, context: CallbackContext) -> None:
-        bot = context.bot
-        chat_id = update.effective_chat.id
-        get_summation_group = db.get_summation_group(chat_id)
+        if update.message.chat.id > 0:
+            bot = context.bot
+            chat_id = update.effective_chat.id
 
-        if get_summation_group is None:
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [
-                        InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'),
-                        InlineKeyboardButton(text='No⛔️', callback_data='No')
+            get_summation_group = db.get_summation_group(chat_id)
+
+            if get_summation_group is None:
+                keyboard = InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'),
+                            InlineKeyboardButton(text='No⛔️', callback_data='No')
+                        ]
                     ]
-                ]
-                )
-            
-            bot.sendMessage(chat_id, "will you send the message to this channel?", reply_markup=keyboard)
+                    )
+                
+                bot.sendMessage(chat_id, "will you send the message to this channel?", reply_markup=keyboard)
 
-        else:
-            text = update.message.text
-            db.updeate_summation_group(text, chat_id)
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [
-                        InlineKeyboardButton(text='Yes🆗', callback_data=f'addgroup'), 
-                        InlineKeyboardButton(text='No⛔️', callback_data='deletegroup')
+            else:
+                text = update.message.text
+                db.updeate_summation_group(text, chat_id)
+
+                keyboard = InlineKeyboardMarkup(
+                    inline_keyboard=[
+                        [
+                            InlineKeyboardButton(text='Yes🆗', callback_data=f'addgroup'), 
+                            InlineKeyboardButton(text='No⛔️', callback_data='deletegroup')
+                        ]
                     ]
-                ]
-                )
+                    )
 
-            bot.sendMessage(chat_id, f'{text} keep this id?', reply_markup=keyboard)
+                bot.sendMessage(chat_id, f'{text} keep this id?', reply_markup=keyboard)
 
     def add_group(self, update: Update, context: CallbackContext) -> None:
-        bot = context.bot
-        chat_id = update.effective_chat.id
-        get_summation_group = db.get_summation_group(chat_id)
+        if update.message.chat.id > 0:
+            bot = context.bot
+            chat_id = update.effective_chat.id
 
-        if get_summation_group:
-            db.delete_summation_group(chat_id)
-            db.add_summation_group(chat_id, update.message.text)
-        else:
-            db.add_summation_group(chat_id, update.message.text)
+            get_summation_group = db.get_summation_group(chat_id)
 
-        text = "Please send the channel name📢\n\n"        
-        text += "Post a message to the group id📝\n\n"
-        text += "For example: -1001974646897\n\n"
+            if get_summation_group:
+                db.delete_summation_group(chat_id)
+                db.add_summation_group(chat_id, update.message.text)
+            else:
+                db.add_summation_group(chat_id, update.message.text)
 
-        bot.send_message(chat_id=chat_id, text=text)
+            text = "Please send the channel name📢\n\n"        
+            text += "Post a message to the group id📝\n\n"
+            text += "For example: -1001974646897\n\n"
+
+            bot.send_message(chat_id=chat_id, text=text)
     
     def add_message(self, update: Update, context: CallbackContext):
         query = update.callback_query
         bot = context.bot
         chat_id = query.message.chat_id
+        
         message_id = query.data.split('_')[1]
 
         all_channels = db.get_all_groups()
@@ -116,8 +122,9 @@ class Post:
         query.edit_message_text(text, reply_markup=None)
     
     def get_id(self, update: Update, context: CallbackContext):
-        chat_id = update.message.chat.id
-        bot = context.bot
-        if chat_id < 0:
-            text = f"This chat's ID is: {chat_id}"
-            bot.send_message(chat_id, text)
+        if update.message.chat.id < 0:
+            chat_id = update.message.chat.id
+            bot = context.bot
+            if chat_id < 0:
+                text = f"This chat's ID is: {chat_id}"
+                bot.send_message(chat_id, text)
