@@ -36,8 +36,3 @@ class DB:
     def delete_summation_group(self, chat_id):
         self.summation_groups.remove(doc_ids=[chat_id])
         return True
-
-db = DB('db.json')
-
-# test get_summation_group
-print(db.delete_summation_group(677038439))

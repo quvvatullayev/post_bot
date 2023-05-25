@@ -23,10 +23,9 @@ class Post:
     
     def add_post_imge(self, update: Update, context: CallbackContext) -> None:
         bot = context.bot
-        
-        data = bot.get_updates()
-        pprint(data)
 
+        get_summation_group = db.get_summation_group(update.effective_chat.id)
+        print(get_summation_group)
         chat_id = update.effective_chat.id
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
@@ -48,10 +47,8 @@ class Post:
         if get_summation_group:
             db.delete_summation_group(chat_id)
             db.add_summation_group(chat_id, update.message.text)
-
         else:
             db.add_summation_group(chat_id, update.message.text)
-            
 
         text = "Please send the channel name📢\n\n"        
         text += "Post a message to the group id📝\n\n"
