@@ -23,27 +23,40 @@ class Post:
     
     def add_post(self, update: Update, context: CallbackContext) -> None:
         bot = context.bot
-
-        get_summation_group = db.get_summation_group(update.effective_chat.id)
-        print(get_summation_group)
         chat_id = update.effective_chat.id
-        keyboard = InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'), 
-                    InlineKeyboardButton(text='No⛔️', callback_data='No')
-                ]
-            ]
-            )
+        get_summation_group = db.get_summation_group(chat_id)
 
-        bot.sendMessage(chat_id, 'Shall I send a message❓', reply_markup=keyboard)
+        if get_summation_group is None:
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'),
+                        InlineKeyboardButton(text='No⛔️', callback_data='No')
+                    ]
+                ]
+                )
+            
+            bot.sendMessage(chat_id, "will you send the message to this channel?", reply_markup=keyboard)
+
+        else:
+            text = update.message.text
+            db.updeate_summation_group(text, chat_id)
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(text='Yes🆗', callback_data=f'addgroup'), 
+                        InlineKeyboardButton(text='No⛔️', callback_data='deletegroup')
+                    ]
+                ]
+                )
+
+            bot.sendMessage(chat_id, f'{text} keep this id?', reply_markup=keyboard)
 
     def add_group(self, update: Update, context: CallbackContext) -> None:
         bot = context.bot
         chat_id = update.effective_chat.id
         get_summation_group = db.get_summation_group(chat_id)
 
-        print(get_summation_group)
         if get_summation_group:
             db.delete_summation_group(chat_id)
             db.add_summation_group(chat_id, update.message.text)
@@ -61,6 +74,7 @@ class Post:
         bot = context.bot
         chat_id = query.message.chat_id
         message_id = query.data.split('_')[1]
+        print(message_id)
 
         all_channels = ['-1001974646897', '-1001974646897']
 
@@ -76,6 +90,28 @@ class Post:
 
     def delet_message(self, update: Update, context: CallbackContext):
         query = update.callback_query
+
+        text = "The message was rejected🚫"
+        query.edit_message_text(text, reply_markup=None)
+
+    def add_group_check(self, update: Update, context: CallbackContext):
+        query = update.callback_query
+        chat_id = query.message.chat_id
+
+        get_summation_group = db.get_summation_group(chat_id)
+        print(get_summation_group, '---------------------------------')
+        
+        db.add_group(get_summation_group['group_id'])
+        db.delete_summation_group(chat_id)
+
+        text = "The message was sent successfully✅"
+        query.edit_message_text(text, reply_markup=None)
+
+    def delet_group_check(self, update: Update, context: CallbackContext):
+        query = update.callback_query
+        chat_id = query.message.chat_id
+
+        db.delete_summation_group(chat_id)
 
         text = "The message was rejected🚫"
         query.edit_message_text(text, reply_markup=None)
