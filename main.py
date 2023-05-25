@@ -1,8 +1,6 @@
-from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup,User
 from telegram.ext import CallbackContext
-from db import DB
-
-db = DB('db.json')
+from pprint import pprint
 
 class Post:
     def start(self, update: Update, context: CallbackContext) -> None:
@@ -22,41 +20,36 @@ class Post:
     
     def add_post_imge(self, update: Update, context: CallbackContext) -> None:
         bot = context.bot
+        
+        data = bot.get_updates()
+        pprint(data)
+
         chat_id = update.effective_chat.id
-
-        print(update.message.text)
-        if db.get_add_channel(chat_id) is None:
-            keyboard = InlineKeyboardMarkup(
-                inline_keyboard=[
-                    [
-                        InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'), 
-                        InlineKeyboardButton(text='No⛔️', callback_data='No')
-                    ]
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text='Yes🆗', callback_data=f'Yes_{update.message.message_id}'), 
+                    InlineKeyboardButton(text='No⛔️', callback_data='No')
                 ]
-                )
+            ]
+            )
 
-            bot.sendMessage(chat_id, 'Shall I send a message❓', reply_markup=keyboard)
-        else:
-            db.update_channel(chat_id, 'add_message')
-            get_add_channel = db.get_add_channel(chat_id)
-            print(get_add_channel)
-
+        bot.sendMessage(chat_id, 'Shall I send a message❓', reply_markup=keyboard)
+    
     def add_message(self, update: Update, context: CallbackContext):
         query = update.callback_query
         bot = context.bot
         chat_id = query.message.chat_id
         message_id = query.data.split('_')[1]
 
-        all_channels = db.get_all_channels()
+        all_channels = ['-1001974646897', '-1001974646897']
 
         for channel in all_channels:
-            print(channel)
-            d = bot.copy_message(
-                chat_id=channel['name'], 
+            bot.copy_message(
+                chat_id=channel, 
                 from_chat_id=chat_id, 
                 message_id=message_id
                 )
-            print(d)
             
         text = "The message was sent successfully✅"
         query.edit_message_text(text, reply_markup=None)
@@ -66,14 +59,3 @@ class Post:
 
         text = "The message was rejected🚫"
         query.edit_message_text(text, reply_markup=None)
-
-    def get_text(self, update: Update, context: CallbackContext):
-        bot = context.bot
-        chat_id = update.message.chat_id
-        text = 'Channel post for example:\n\n@channel_name'
-        if db.get_add_channel(chat_id) is None:
-            db.add_channel_add(chat_id, 'add_channel')
-            bot.sendMessage(chat_id, text)
-        else:
-            db.update_channel(chat_id, 'add_channel')
-            bot.sendMessage(chat_id, text)
