@@ -8,6 +8,7 @@ db = DB('db.json')
 class Post:
     def start(self, update: Update, context: CallbackContext) -> None:
         bot = context.bot
+        
         chat_id = update.effective_chat.id
         text  = "Hello, I'm a bot that can post messages to your channel✋.\n"
         text += "To get started, add me to your channel as an administrator and send me the channel name.\n"
@@ -113,3 +114,10 @@ class Post:
 
         text = "The message was rejected🚫"
         query.edit_message_text(text, reply_markup=None)
+    
+    def get_id(self, update: Update, context: CallbackContext):
+        chat_id = update.message.chat.id
+        bot = context.bot
+        if chat_id < 0:
+            text = f"This chat's ID is: {chat_id}"
+            bot.send_message(chat_id, text)
