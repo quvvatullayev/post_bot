@@ -74,13 +74,12 @@ class Post:
         bot = context.bot
         chat_id = query.message.chat_id
         message_id = query.data.split('_')[1]
-        print(message_id)
 
-        all_channels = ['-1001974646897', '-1001974646897']
+        all_channels = db.get_all_groups()
 
         for channel in all_channels:
             bot.copy_message(
-                chat_id=channel, 
+                chat_id=channel['group_id'], 
                 from_chat_id=chat_id, 
                 message_id=message_id
                 )
@@ -99,7 +98,6 @@ class Post:
         chat_id = query.message.chat_id
 
         get_summation_group = db.get_summation_group(chat_id)
-        print(get_summation_group, '---------------------------------')
         
         db.add_group(get_summation_group['group_id'])
         db.delete_summation_group(chat_id)
