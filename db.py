@@ -36,3 +36,30 @@ class DB:
     def delete_summation_group(self, chat_id):
         self.summation_groups.remove(doc_ids=[chat_id])
         return True
+    
+class Admin:
+    def __init__(self, path):
+        self.db = TinyDB(path, indent=4, separators=(',', ': '))
+        self.query = Query()
+        self.admins = self.db.table('admins')
+
+    """
+    admins schema:
+        "username":{
+            "id": 123456789,
+            "username": "username",
+            "first_name": "first_name",
+        }
+    """
+    def add_admin(self, username, id, first_name):
+        self.admins.insert(Document({'chat_id':id, 'username':username, 'first_name':first_name}, doc_id=username))
+
+    def get_admin(self, username):
+        return self.admins.get(doc_id=username)
+    
+    def get_all_admins(self):
+        return self.admins.all()
+    
+    def delete_admin(self, username):
+        self.admins.remove(doc_ids=[username])
+        return True
