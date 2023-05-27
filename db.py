@@ -64,7 +64,7 @@ class Admin:
         self.admins.remove(doc_ids=[username])
         return True
     
-class User:
+class Users:
     def __init__(self, path):
         self.db = TinyDB(path, indent=4, separators=(',', ': '))
         self.query = Query()
@@ -72,17 +72,17 @@ class User:
 
     """
     users schema:
-        "username":{
+        "chat_id":{
             "id": 123456789,
             "username": "username",
             "first_name": "first_name",
         }
     """
     def add_user(self, username, id, first_name):
-        self.users.insert(Document({'chat_id':id, 'username':username, 'first_name':first_name}, doc_id=username))
+        self.users.insert(Document({'chat_id':id, 'username':username, 'first_name':first_name}, doc_id=id))
 
     def get_user(self, username):
-        return self.users.get(doc_id=username)
+        return self.users.get(username=username)
     
     def get_all_users(self):
         return self.users.all()
