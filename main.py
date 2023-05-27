@@ -1,8 +1,9 @@
 from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from db import DB
+from db import DB, Admin
 
 db = DB('db.json')
+admin = Admin('admin.json')
 
 class Post:
     def start(self, update: Update, context: CallbackContext) -> None:
