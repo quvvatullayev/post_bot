@@ -81,8 +81,8 @@ class Users:
     def add_user(self, username, id, first_name):
         self.users.insert(Document({'chat_id':id, 'username':username, 'first_name':first_name}, doc_id=id))
 
-    def get_user(self, username):
-        return self.users.get(username=username)
+    def get_user(self, chat_id):
+        return self.users.get(doc_id=chat_id)
     
     def get_all_users(self):
         return self.users.all()

@@ -1,28 +1,48 @@
 from telegram import Update, ReplyKeyboardMarkup, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
-from db import DB, Admin
+from db import DB, Admin, Users
 
 db = DB('db.json')
 admin = Admin('admin.json')
+user = Users('user.json')
 
 class Post:
     def start(self, update: Update, context: CallbackContext) -> None:
         if update.message.chat.id > 0:
-            bot = context.bot
-            chat_id = update.effective_chat.id
+            username = update.message.from_user.username
+            get_admin = admin.get_admin(username)
 
-            text  = "Hello, I'm a bot that can post messages to your channel✋.\n"
-            text += "To get started, add me to your channel as an administrator and send me the channel name.\n"
+            if get_admin or username == 'ogabekquvvatullayev':
+                bot = context.bot
+                chat_id = update.effective_chat.id
 
-            reply_markup = ReplyKeyboardMarkup(
-                keyboard=[
-                    ['add channel']
-                ],
-                resize_keyboard=True     
-                )
+                text  = "Hello, I'm a bot that can post messages to your channel✋.\n"
+                text += "To get started, add me to your channel as an administrator and send me the channel name.\n"
 
-            bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
-    
+                reply_markup = ReplyKeyboardMarkup(
+                    keyboard=[
+                        ['add channel']
+                    ],
+                    resize_keyboard=True     
+                    )
+
+                bot.send_message(chat_id=chat_id, text=text, reply_markup=reply_markup)
+            else:
+                bot = context.bot
+                chat_id = update.effective_chat.id
+                username = update.message.from_user.username
+                first_name = update.message.from_user.first_name
+                get_user = user.get_user(chat_id=chat_id)
+                
+                if get_user is None:
+                    add_user = user.add_user(username=username, id=chat_id, first_name=first_name)
+                    text = "Hello, I'm a bot that can post messages to your channel✋.\n"
+                    bot.send_message(chat_id=chat_id, text=text)
+                else:
+                    text = "Hello, I'm a bot that can post messages to your channel✋.\n"
+                    bot.send_message(chat_id=chat_id, text=text)
+
+                
     def add_post(self, update: Update, context: CallbackContext) -> None:
         if update.message.chat.id > 0:
             bot = context.bot
