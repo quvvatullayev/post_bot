@@ -23,6 +23,7 @@ class Post:
                     keyboard=[
                         ['add channel'],
                         ['add admin', 'admin list'],
+                        ['delete admin']
                     ],
                     resize_keyboard=True     
                     )
@@ -214,3 +215,14 @@ class Post:
                     text += f"{n}. {admi['username']}\n"
                     n += 1
                 bot.send_message(chat_id=chat_id, text=text)
+
+    def delete_admin(self, update: Update, context: CallbackContext):
+        username = update.message.from_user.username
+        get_admin = admin.get_admin_by_username(username)
+        if get_admin or username == "ogabekquvvatullayev":
+            bot = context.bot
+            chat_id = update.effective_chat.id
+            text = "Send the username of the person you want to delete from admin👨‍💻\n\n"
+            text += "For example: delete <username>"
+            bot.send_message(chat_id=chat_id, text=text)
+        
