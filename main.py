@@ -22,7 +22,7 @@ class Post:
                 reply_markup = ReplyKeyboardMarkup(
                     keyboard=[
                         ['add channel'],
-                        ['add admin'],
+                        ['add admin', 'admin list'],
                     ],
                     resize_keyboard=True     
                     )
@@ -192,3 +192,25 @@ class Post:
             text = "Send the username of the person you want to admin👨‍💻\n\n"
             text += "For example: ogabekquvvatullayev"
             bot.send_message(chat_id=chat_id, text=text)
+
+    def admin_list(self, update: Update, context: CallbackContext):
+        username = update.message.from_user.username
+        get_admin = admin.get_admin_by_username(username)
+        if get_admin or username == "ogabekquvvatullayev":
+            bot = context.bot
+            chat_id = update.effective_chat.id
+            all_admins = admin.get_all_admins()
+
+            if not all_admins:
+                text = "Admin list:\n\n"
+                text += "Admin list is empty"
+                bot.send_message(chat_id=chat_id, text=text)
+                return False
+            
+            else:
+                text = "Admin list:\n\n"
+                n = 1
+                for admi in all_admins:
+                    text += f"{n}. {admi['username']}\n"
+                    n += 1
+                bot.send_message(chat_id=chat_id, text=text)
