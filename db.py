@@ -73,6 +73,10 @@ class Admin:
         self.admins.remove(doc_ids=[1])
         return True
     
+    def delete_admin_by_chat_id(self, chat_id):
+        self.admins.remove(doc_ids=[chat_id])
+        return True
+    
 class Users:
     def __init__(self, path):
         self.db = TinyDB(path, indent=4, separators=(',', ': '))

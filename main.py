@@ -222,7 +222,22 @@ class Post:
         if get_admin or username == "ogabekquvvatullayev":
             bot = context.bot
             chat_id = update.effective_chat.id
-            text = "Send the username of the person you want to delete from admin👨‍💻\n\n"
-            text += "For example: delete <username>"
-            bot.send_message(chat_id=chat_id, text=text)
+            text = update.message.text
+            if text == 'delete admin':
+                text = "Send the username of the person you want to delete from admin👨‍💻\n\n"
+                text += "For example: delete <username>"
+                bot.send_message(chat_id=chat_id, text=text)
+            else:
+                text = text.split(' ')
+                username = text[1]
+                get_admin = admin.get_admin_by_username(username)
+                if get_admin:
+                    get_admin = get_admin[0]
+                    print(get_admin)
+                    delete_admin = admin.delete_admin_by_chat_id(chat_id=get_admin['chat_id'])
+                    text = "The user has been deleted from the admin list✅"
+                    bot.send_message(chat_id=chat_id, text=text)
+                else:
+                    text = "The user was not found❌"
+                    bot.send_message(chat_id=chat_id, text=text)
         
