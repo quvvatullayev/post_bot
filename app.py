@@ -14,22 +14,23 @@ post = Post()
 
 @app.route('/', methods=['POST'])
 def index():
-    dp = Dispatcher(bot, None, workers=0)
+    dispatcher = Dispatcher(bot, None, workers=0)
 
     data = request.get_json(force=True)
     update = Update.de_json(data, bot)
 
-    dp.add_handler(CommandHandler('start', post.start))
-    dp.add_handler(CommandHandler('id', post.get_id))
-    dp.add_handler(MessageHandler(Filters.text('add admin'), post.add_admin))
-    dp.add_handler(CallbackQueryHandler(post.add_group_check, pattern='addgroup'))
-    dp.add_handler(CallbackQueryHandler(post.delet_group_check, pattern='deletegroup'))
-    dp.add_handler(CallbackQueryHandler(post.add_message, pattern='Yes'))
-    dp.add_handler(CallbackQueryHandler(post.delet_message, pattern='No'))
-    dp.add_handler(MessageHandler(Filters.text('add channel'), post.add_group))
-    dp.add_handler(MessageHandler(Filters.all, post.add_post))
-
-    dp.process_update(update)
+    dispatcher.add_handler(CommandHandler('start', post.start))
+    dispatcher.add_handler(CommandHandler('id', post.get_id))
+    dispatcher.add_handler(MessageHandler(Filters.text('add admin'), post.add_admin))
+    dispatcher.add_handler(MessageHandler(Filters.text('admin list'), post.admin_list))
+    dispatcher.add_handler(MessageHandler(Filters.text & Filters.regex('^delete'), post.delete_admin))
+    dispatcher.add_handler(CallbackQueryHandler(post.add_group_check, pattern='addgroup'))
+    dispatcher.add_handler(CallbackQueryHandler(post.delet_group_check, pattern='deletegroup'))
+    dispatcher.add_handler(CallbackQueryHandler(post.add_message, pattern='Yes'))
+    dispatcher.add_handler(CallbackQueryHandler(post.delet_message, pattern='No'))
+    dispatcher.add_handler(MessageHandler(Filters.text('add channel'), post.add_group))
+    dispatcher.add_handler(MessageHandler(Filters.all, post.add_post))
+    dispatcher.process_update(update)
     return 'ok'
 
 
