@@ -5,7 +5,7 @@ from telegram import Update
 from main import Post
 
 
-TOKEN = '5677023630:AAGdskZAvZwdRix213Ho28QaN-NZVcQtuU8'
+TOKEN = '5961163643:AAFgyilG0if7Ud0xwHJG-r-PZbohqOZKrDE'
 
 app = Flask(__name__)
 
