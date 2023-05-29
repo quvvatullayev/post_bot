@@ -21,9 +21,8 @@ class Post:
 
                 reply_markup = ReplyKeyboardMarkup(
                     keyboard=[
-                        ['add channel'],
-                        ['add admin', 'admin list'],
-                        ['delete admin']
+                        ['add channel', 'add admin'],
+                        ['delete admin', 'admin list'],
                     ],
                     resize_keyboard=True     
                     )
