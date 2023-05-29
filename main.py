@@ -21,7 +21,8 @@ class Post:
 
                 reply_markup = ReplyKeyboardMarkup(
                     keyboard=[
-                        ['add channel']
+                        ['add channel'],
+                        ['add admin'],
                     ],
                     resize_keyboard=True     
                     )
@@ -49,8 +50,32 @@ class Post:
             chat_id = update.effective_chat.id
 
             get_summation_group = db.get_summation_group(chat_id)
+            get_admin = admin.get_admin(id=1)
 
-            if get_summation_group is None:
+            if get_admin:
+                text = update.message.text
+                get_user = user.get_user_by_username(text)
+
+                if not get_user:
+                    text = "The user was not found❌"
+                    bot.send_message(chat_id, text)
+
+                else:
+                    print(get_user)
+                    get_user = get_user[0]
+                    first_name = get_user['first_name']
+                    username = get_user['username']
+                    user_id = get_user['chat_id']
+
+                    add_admin = admin.add_admin(username=username, id=user_id, first_name=first_name)
+                    delete_user = user.delete_user(chat_id=user_id)
+                    delete_admin = admin.delete_admin()
+
+                    text = "The user has been assigned to the administrator position✅"
+                    bot.send_message(chat_id, text)
+
+
+            elif get_summation_group is None:
                 keyboard = InlineKeyboardMarkup(
                     inline_keyboard=[
                         [
@@ -149,3 +174,11 @@ class Post:
             if chat_id < 0:
                 text = f"Copied message: {chat_id}"
                 bot.send_message(chat_id, text)
+
+    def add_admin(self, update: Update, context: CallbackContext):
+        bot = context.bot
+        chat_id = update.effective_chat.id
+        add_admin = admin.add_admin()
+        text = "Send the username of the person you want to admin👨‍💻\n\n"
+        text += "For example: ogabekquvvatullayev"
+        bot.send_message(chat_id=chat_id, text=text)

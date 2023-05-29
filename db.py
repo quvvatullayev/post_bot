@@ -51,17 +51,22 @@ class Admin:
             "first_name": "first_name",
         }
     """
-    def add_admin(self, username, id, first_name):
-        self.admins.insert(Document({'chat_id':id, 'username':username, 'first_name':first_name}, doc_id=username))
+    def add_admin(self, username='admin', id='1', first_name='admin'):
+        self.admins.insert(Document({'chat_id':id, 'username':username, 'first_name':first_name}, doc_id=id))
+        return True
 
-    def get_admin(self, username):
-        return self.admins.get(doc_id=username)
+    def updeate_admin(self, username, id, first_name):
+        self.admins.update(Document({'chat_id':id, 'username':username, 'first_name':first_name}, doc_id=id))
+        return True
+
+    def get_admin(self, id):
+        return self.admins.get(doc_id=id)
     
     def get_all_admins(self):
         return self.admins.all()
     
-    def delete_admin(self, username):
-        self.admins.remove(doc_ids=[username])
+    def delete_admin(self):
+        self.admins.remove(doc_ids=[1])
         return True
     
 class Users:
@@ -84,9 +89,13 @@ class Users:
     def get_user(self, chat_id):
         return self.users.get(doc_id=chat_id)
     
+    def get_user_by_username(self, username):
+        user  = self.users.search(self.query.username == username)
+        return user
+    
     def get_all_users(self):
         return self.users.all()
     
-    def delete_user(self, username):
-        self.users.remove(doc_ids=[username])
+    def delete_user(self, chat_id):
+        self.users.remove(doc_ids=[chat_id])
         return True
