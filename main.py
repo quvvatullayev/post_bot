@@ -214,8 +214,9 @@ class Post:
                 for admi in all_admins:
                     if admi['username'] == 'admin' and admi['chat_id'] == '1':
                         admin.delete_admin()
-                    text += f"{n}. {admi['username']}\n"
-                    n += 1
+                    else:
+                        text += f"{n}. {admi['username']}\n"
+                        n += 1
                 bot.send_message(chat_id=chat_id, text=text)
 
     def delete_admin(self, update: Update, context: CallbackContext):
