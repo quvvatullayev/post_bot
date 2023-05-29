@@ -62,6 +62,10 @@ class Admin:
     def get_admin(self, id):
         return self.admins.get(doc_id=id)
     
+    def get_admin_by_username(self, username):
+        admin  = self.admins.search(self.query.username == username)
+        return admin
+    
     def get_all_admins(self):
         return self.admins.all()
     

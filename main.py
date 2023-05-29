@@ -10,7 +10,7 @@ class Post:
     def start(self, update: Update, context: CallbackContext) -> None:
         if update.message.chat.id > 0:
             username = update.message.from_user.username
-            get_admin = admin.get_admin(username)
+            get_admin = admin.get_admin_by_username(username)
 
             if get_admin or username == 'ogabekquvvatullayev':
                 bot = context.bot
@@ -38,10 +38,10 @@ class Post:
                 if get_user is None:
                     add_user = user.add_user(username=username, id=chat_id, first_name=first_name)
                     text = "Hello, I'm a bot that can post messages to your channel✋.\n"
-                    bot.send_message(chat_id=chat_id, text=text)
+                    bot.send_message(chat_id=chat_id, text=text, reply_markup = None)
                 else:
                     text = "Hello, I'm a bot that can post messages to your channel✋.\n"
-                    bot.send_message(chat_id=chat_id, text=text)
+                    bot.send_message(chat_id=chat_id, text=text, reply_markup=None)
 
                 
     def add_post(self, update: Update, context: CallbackContext) -> None:
@@ -74,6 +74,10 @@ class Post:
                     text = "The user has been assigned to the administrator position✅"
                     bot.send_message(chat_id, text)
 
+                    text = 'You have become a bot admin by secret bot admin✅'
+                    bot.send_message(user_id, text)
+                    self.start
+
 
             elif get_summation_group is None:
                 keyboard = InlineKeyboardMarkup(
@@ -103,23 +107,26 @@ class Post:
                 bot.sendMessage(chat_id, f'{text} keep this id?', reply_markup=keyboard)
 
     def add_group(self, update: Update, context: CallbackContext) -> None:
-        if update.message.chat.id > 0:
-            bot = context.bot
-            chat_id = update.effective_chat.id
+        username = update.message.from_user.username
+        get_admin = admin.get_admin_by_username(username)
+        if get_admin or username == 'ogabekquvvatullayev':
+            if update.message.chat.id > 0:
+                bot = context.bot
+                chat_id = update.effective_chat.id
 
-            get_summation_group = db.get_summation_group(chat_id)
+                get_summation_group = db.get_summation_group(chat_id)
 
-            if get_summation_group:
-                db.delete_summation_group(chat_id)
-                db.add_summation_group(chat_id, update.message.text)
-            else:
-                db.add_summation_group(chat_id, update.message.text)
+                if get_summation_group:
+                    db.delete_summation_group(chat_id)
+                    db.add_summation_group(chat_id, update.message.text)
+                else:
+                    db.add_summation_group(chat_id, update.message.text)
 
-            text = "Please send the channel name📢\n\n"        
-            text += "Post a message to the group id📝\n\n"
-            text += "For example: -1001974646897\n\n"
+                text = "Please send the channel name📢\n\n"        
+                text += "Post a message to the group id📝\n\n"
+                text += "For example: -1001974646897\n\n"
 
-            bot.send_message(chat_id=chat_id, text=text)
+                bot.send_message(chat_id=chat_id, text=text)
     
     def add_message(self, update: Update, context: CallbackContext):
         query = update.callback_query
@@ -176,9 +183,12 @@ class Post:
                 bot.send_message(chat_id, text)
 
     def add_admin(self, update: Update, context: CallbackContext):
-        bot = context.bot
-        chat_id = update.effective_chat.id
-        add_admin = admin.add_admin()
-        text = "Send the username of the person you want to admin👨‍💻\n\n"
-        text += "For example: ogabekquvvatullayev"
-        bot.send_message(chat_id=chat_id, text=text)
+        username = update.message.from_user.username
+        get_admin = admin.get_admin_by_username(username)
+        if get_admin or username == "ogabekquvvatullayev":
+            bot = context.bot
+            chat_id = update.effective_chat.id
+            add_admin = admin.add_admin()
+            text = "Send the username of the person you want to admin👨‍💻\n\n"
+            text += "For example: ogabekquvvatullayev"
+            bot.send_message(chat_id=chat_id, text=text)
