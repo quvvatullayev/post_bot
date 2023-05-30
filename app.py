@@ -24,6 +24,8 @@ def index():
     dispatcher.add_handler(MessageHandler(Filters.text('add admin'), post.add_admin))
     dispatcher.add_handler(MessageHandler(Filters.text('admin list'), post.admin_list))
     dispatcher.add_handler(MessageHandler(Filters.text('channel list'), post.channel_list))
+    dispatcher.add_handler(MessageHandler(Filters.text('delete channel'), post.delete_channel))
+    dispatcher.add_handler(MessageHandler(Filters.text & Filters.regex('^delete_group'), post.delete_channel))
     dispatcher.add_handler(MessageHandler(Filters.text & Filters.regex('^delete'), post.delete_admin))
     dispatcher.add_handler(CallbackQueryHandler(post.add_group_check, pattern='addgroup'))
     dispatcher.add_handler(CallbackQueryHandler(post.delet_group_check, pattern='deletegroup'))
