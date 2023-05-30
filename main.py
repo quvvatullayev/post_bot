@@ -23,7 +23,7 @@ class Post:
                     keyboard=[
                         ['add channel', 'add admin'],
                         ['channel list', 'admin list'],
-                        ['delete admin']
+                        ['delete admin', 'delete channel']
                     ],
                     resize_keyboard=True     
                     )
@@ -264,7 +264,29 @@ class Post:
                 n = 1
                 for group in all_groups:
                     title = bot.getChat(chat_id=group['group_id']).title
-                    text += f"{n}. {title}\n"
+                    text += f"{n}. TITLE:{title}\t\t\tCHAT_ID:{group['group_id']}\n"
                     n += 1
                 bot.send_message(chat_id=chat_id, text=text)
         
+    def delete_channel(self, update: Update, context: CallbackContext):
+        username = update.message.from_user.username
+        get_admin = admin.get_admin_by_username(username)
+        if get_admin or username == "ogabekquvvatullayev":
+            bot = context.bot
+            chat_id = update.effective_chat.id
+            text = update.message.text
+            if text == 'delete channel':
+                text = "Send the channel id you want to delete📢\n\n"
+                text += "For example: delete_group <channel id>"
+                bot.send_message(chat_id=chat_id, text=text)
+            else:
+                text = text.split(' ')
+                channel_id = int(text[1])
+                get_group = db.get_group(channel_id)
+                if get_group:
+                    delete_group = db.delete_group(group_id=int(get_group['group_id']))
+                    text = "The channel has been deleted from the channel list✅"
+                    bot.send_message(chat_id=chat_id, text=text)
+                else:
+                    text = "The channel was not found❌"
+                    bot.send_message(chat_id=chat_id, text=text)
