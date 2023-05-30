@@ -23,7 +23,7 @@ class Post:
                     keyboard=[
                         ['add channel', 'add admin'],
                         ['channel list', 'admin list'],
-                        ['delete admin', 'delete channel']
+                        ['delete channel', 'delete admin']
                     ],
                     resize_keyboard=True     
                     )
