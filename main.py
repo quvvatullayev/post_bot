@@ -22,7 +22,8 @@ class Post:
                 reply_markup = ReplyKeyboardMarkup(
                     keyboard=[
                         ['add channel', 'add admin'],
-                        ['delete admin', 'admin list'],
+                        ['channel list', 'admin list'],
+                        ['delete admin']
                     ],
                     resize_keyboard=True     
                     )
@@ -177,6 +178,7 @@ class Post:
     def get_id(self, update: Update, context: CallbackContext):
         if update.message.chat.id < 0:
             chat_id = update.message.chat.id
+            print(update)
             bot = context.bot
             if chat_id < 0:
                 text = f"Copied message: {chat_id}"
@@ -242,4 +244,27 @@ class Post:
                 else:
                     text = "The user was not found❌"
                     bot.send_message(chat_id=chat_id, text=text)
+    
+    def channel_list(self, update: Update, context: CallbackContext):
+        username = update.message.from_user.username
+        get_admin = admin.get_admin_by_username(username)
+        if get_admin or username == "ogabekquvvatullayev":
+            bot = context.bot
+            chat_id = update.effective_chat.id
+            all_groups = db.get_all_groups()
+
+            if not all_groups:
+                text = "Channel list:\n\n"
+                text += "Channel list is empty"
+                bot.send_message(chat_id=chat_id, text=text)
+                return False
+            
+            else:
+                text = "Channel list:\n\n"
+                n = 1
+                for group in all_groups:
+                    title = bot.getChat(chat_id=group['group_id']).title
+                    text += f"{n}. {title}\n"
+                    n += 1
+                bot.send_message(chat_id=chat_id, text=text)
         
